@@ -111,17 +111,24 @@ class MainActivity : AppCompatActivity(),View.OnClickListener {
         //判断应该撤销运算符还是数字
         if(numsList.size > operatorsList.size){
             //撤销数字
-            numsList.removeLast()
-            isNumStart = true
-            currentInputNumSB.clear()
+            if (numsList.size > 0) {
+                numsList.removeLast()
+                isNumStart = true
+                currentInputNumSB.clear()
+            }
         }else{
             //撤销运算符
-            operatorsList.removeLast()
-            isNumStart = false
-            currentInputNumSB.append(numsList.last())
+            if (operatorsList.size > 0) {
+                operatorsList.removeLast()
+                isNumStart = false
+                if (numsList.size > 0) {
+                    currentInputNumSB.append(numsList.last())
+                }
+            }
         }
 
         showUI()
+        calculate()
     }
 
     //数字键
@@ -170,8 +177,10 @@ class MainActivity : AppCompatActivity(),View.OnClickListener {
                         if (i == operatorsList.size-1 ||
                                 (operatorsList[i+1] != "x" && operatorsList[i+1] != "÷")){
                             //可以直接运算
-                            param2 = numsList[i+1].toFloat()
-                            param1 = realCalculate(param1, operator, param2)
+                            if (i < numsList.size-1) {
+                                param2 = numsList[i + 1].toFloat()
+                                param1 = realCalculate(param1, operator, param2)
+                            }
                         }else{
                             //后面有而且是乘 或者 是除
                             var j = i+1
@@ -180,8 +189,10 @@ class MainActivity : AppCompatActivity(),View.OnClickListener {
                             while (true){
                                 //获取j对应的运算符
                                 if (operatorsList[j] == "x" || operatorsList[j] == "÷"){
-                                    mparam2 = numsList[j+1].toFloat()
-                                    mparam1 = realCalculate(mparam1,operatorsList[j],mparam2)
+                                    if (j < operatorsList.size-1) {
+                                        mparam2 = numsList[j + 1].toFloat()
+                                        mparam1 = realCalculate(mparam1, operatorsList[j], mparam2)
+                                    }
                                 }else{
                                     //之前那个运算符后面所有连续的乘除都运算结束了
                                     break
@@ -206,6 +217,8 @@ class MainActivity : AppCompatActivity(),View.OnClickListener {
             }
             //显示对应的结果
             result_textview.text = String.format("%.1f",param1)
+        }else{
+            result_textview.text = "0"
         }
     }
 
